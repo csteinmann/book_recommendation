@@ -1,0 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+
+.column {
+  -moz-column-count: 2; /* For Firefox */
+  -webkit-column-count: 2; /* For Safari/Chrome */
+  column-count: 2; /* For when te standard gets fully supported */
+}
+
+
+.service-list {
+list-style-type: none;
+margin-left:0;
+  margin-top: 10px;
+padding-left:0;
+display: inline-block;
+}
+
+.service-list img
+{
+float:left;
+}
+
+.service-list p,.service-list h3 {
+text-align: left;
+display:inline-block;
+padding: 0;
+}

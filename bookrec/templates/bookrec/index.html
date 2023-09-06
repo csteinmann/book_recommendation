@@ -1,88 +1,74 @@
 <!DOCTYPE html>
+{% extends 'bookrec/base.html' %}
 {%  load static %}
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <style>
-            .column {
-                -moz-column-count: 4; /* For Firefox */
-                -webkit-column-count: 4; /* For Safari/Chrome */
-                column-count: 4; /* For when te standard gets fully supported */
-            }
-        </style>
-        <title>BookRec</title>
-    </head>
 
-    <body>
-        <h1>User perception on book recommendation systems</h1>
-        <div>
-            Hey, my name is Clemens, and I am currently studying Computer Science at the University of Koblenz. The following case study is being used for my bachelor's thesis, in which I am investigating the influences of user perceptions on recommendation systems. Specifically, my work is focused on book recommendation systems. Please familiarize yourself with the <strong>scenario</strong> provided below and then follow the further instructions. I thank you very much for your participation.<br />
-        </div>
-        <h2>Research scenario</h2>
-        <div>
-            Imagine you are a big fan of fantasy books and are looking for a new book to read. To assist you, you are using the help of four different recommendation systems, each of which has created a top-10 list for you. These lists show books that are recommended based on your interests. The first book in each list represents the system's best-fit recommendation. Please carefully review the lists and then fill out the questionnaire. Thank you very much.
-        </div>
-        <div class="column">
+{% block body_block %}
+    <h1>User perception on book recommendation systems</h1>
+    <h2>Research scenario</h2>
+    <p>
+        Imagine you are a big fan of science-fiction books and are looking for a new book to read. To assist you, you are using the help of four different recommendation systems, each of which has created a top-10 list for you. These lists show books that are recommended based on your interests. The first book in each list represents the system's best-fit recommendation. Please carefully review the lists and then fill out the questionnaire.
+    </p>
+    <div style="float:left; width: 29%">
         <h3>List A (10 Books)</h3>
             {% if books_ii %}
                 <ul>
                     {% for book in books_ii %}
-                        <li>
-                            <img src="{{ book.cover_page }}"><br />
-                            <strong>{{ book.title_without_series }}</strong><br />
-                            {{ book.publication_year }} published {{ book.publisher }}<br />
-                            {{ book.book_average_rating }}
+                        <li class="service-list">
+                            <a href="">
+                                <img src="{{ book.cover_page }}" alt=""/>
+                            </a>
+                            <p>
+                                <strong>{{ book.title_without_series }}</strong><br>
+                                {{ book.publication_year }} published by {{ book.publisher }}<br>
+                                {{ book.book_average_rating }}
+                            </p>
                         </li>
                     {% endfor %}
                 </ul>
             {% else %}
                 There are no books yet.
             {% endif %}
+    </div>
+    <div style="float:left; width: 30%">
         <h3>List B (10 Books)</h3>
             {% if books_uu %}
                     <ul>
-                        {% for book in books_uu %}
-                            <li>
-                                <img src="{{ book.cover_page }}"><br />
-                                <strong>{{ book.title_without_series }}</strong><br />
-                                {{ book.publication_year }} published {{ book.publisher }}<br />
+                    {% for book in books_uu %}
+                        <li class="service-list">
+                            <a href="">
+                                <img src="{{ book.cover_page }}" alt=""/>
+                            </a>
+                            <p>
+                                <strong>{{ book.title_without_series }}</strong><br>
+                                {{ book.publication_year }} published by {{ book.publisher }}<br>
                                 {{ book.book_average_rating }}
-                            </li>
-                        {% endfor %}
-                    </ul>
+                            </p>
+                        </li>
+                    {% endfor %}
+                </ul>
                 {% else %}
                     There are no books yet.
                 {% endif %}
+    </div>
+    <div style="float:left; width: 34%">
         <h3>List C (10 Books)</h3>
-            {% if books_svd %}
+            {% if books_als %}
                     <ul>
-                        {% for book in books_svd %}
-                            <li>
-                                <img src="{{ book.cover_page }}"><br />
-                                <strong>{{ book.title_without_series }}</strong><br />
-                                {{ book.publication_year }} published {{ book.publisher }}<br />
+                    {% for book in books_als %}
+                        <li class="service-list">
+                            <a href="">
+                                <img src="{{ book.cover_page }}" alt=""/>
+                            </a>
+                            <p>
+                                <strong>{{ book.title_without_series }}</strong><br>
+                                {{ book.publication_year }} published by {{ book.publisher }}<br>
                                 {{ book.book_average_rating }}
-                            </li>
-                        {% endfor %}
-                    </ul>
+                            </p>
+                        </li>
+                    {% endfor %}
+                </ul>
                 {% else %}
                     There are no books yet.
                 {% endif %}
-        <h3>List D (10 Books)</h3>
-            {% if books_nn %}
-                    <ul>
-                        {% for book in books_nn %}
-                            <li>
-                                <img src="{{ book.cover_page }}"><br />
-                                <strong>{{ book.title_without_series }}</strong><br />
-                                {{ book.publication_year }} published {{ book.publisher }}<br />
-                                {{ book.book_average_rating }}
-                            </li>
-                        {% endfor %}
-                    </ul>
-                {% else %}
-                    There are no books yet.
-                {% endif %}
-        </div>
-    </body>
-</html>
+    </div>
+{% endblock %}

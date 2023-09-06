@@ -1,3 +1,9 @@
+"""Script for populating the db.sqlite3 database with the desired data form the following data set:
+https://mengtingwan.github.io/data/goodreads.html#datasets specifically the goodreads_books.json.gz file
+(~2gb, about 2.3m books). The mentioned file has to be unzipped, converted to a csv file and placed in the data
+folder at the manage.py level to work properly.
+"""
+
 import os
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE',
@@ -28,9 +34,6 @@ def run():
         book.cover_page = row[7]
         book.book_url = row[8]
         book.save()
-
-
-
 
 
 if __name__ == '__main__':

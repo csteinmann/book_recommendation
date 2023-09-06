@@ -1,6 +1,8 @@
-# Code relict
-# Used to populate the database to test models
-# Won't work anymore
+"""
+Code relict which was used to populate the database with one book to test out the model configuration.
+Won't work anymore due to changes in the book model. (attributes and names were changed).
+Is easily fixed by changing the names of the attributes if desired.
+"""
 
 import os
 
