@@ -13,7 +13,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Create your views here.
 
 def index(request):
+    context_dict = create_context_dict()
+    return render(request, 'bookrec/index.html', context_dict)
 
+
+def create_context_dict():
     # Create entries for the book list using our helper function
     books_ii = read_csv_recs(os.path.join(BASE_DIR, 'data/recs_ii.csv'))
     books_uu = read_csv_recs(os.path.join(BASE_DIR, 'data/recs_uu.csv'))
@@ -21,7 +25,7 @@ def index(request):
 
     book_list = [books_ii, books_uu, books_als]
 
-    # open pickle to receive current rotation state
+    #initiate_pickle()
     with open('rotator_pickle.pk', 'rb') as fi:
         current_rotation_list = pickle.load(fi)
         rotation_state = current_rotation_list[0]
@@ -31,27 +35,33 @@ def index(request):
     if rotation_state == 'IIUU':
         context_dict = {'rotation_state': rotation_state, 'books_a': book_list[0], 'books_b': book_list[1]}
         rotate_content_list()
-        return render(request, 'bookrec/index.html', context_dict)
+        return context_dict
     elif rotation_state == 'IIALS':
         context_dict = {'rotation_state': rotation_state, 'books_a': book_list[0], 'books_b': book_list[2]}
         rotate_content_list()
-        return render(request, 'bookrec/index.html', context_dict)
+        return context_dict
     elif rotation_state == 'UUALS':
         context_dict = {'rotation_state': rotation_state, 'books_a': book_list[1], 'books_b': book_list[2]}
         rotate_content_list()
-        return render(request, 'bookrec/index.html', context_dict)
+        return context_dict
     elif rotation_state == 'UUII':
         context_dict = {'rotation_state': rotation_state, 'books_a': book_list[1], 'books_b': book_list[0]}
         rotate_content_list()
-        return render(request, 'bookrec/index.html', context_dict)
+        return context_dict
     elif rotation_state == 'ALSII':
         context_dict = {'rotation_state': rotation_state, 'books_a': book_list[2], 'books_b': book_list[0]}
         rotate_content_list()
-        return render(request, 'bookrec/index.html', context_dict)
+        return context_dict
     elif rotation_state == 'ALSUU':
         context_dict = {'rotation_state': rotation_state, 'books_a': book_list[2], 'books_b': book_list[1]}
         rotate_content_list()
-        return render(request, 'bookrec/index.html', context_dict)
+        return context_dict
+
+
+def initiate_pickle():
+    rotation_list = ['IIUU', 'IIALS', 'UUALS', 'UUII', 'ALSII', 'ALSUU']
+    with open('rotator_pickle.pk', 'wb') as fi:
+        pickle.dump(rotation_list, fi)
 
 
 def rotate_content_list():
