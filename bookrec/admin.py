@@ -3,7 +3,7 @@ from bookrec.models import Book, Survey, Question, Choice, Submission
 
 
 class BookAdmin(admin.ModelAdmin):
-    search_fields = ['title_without_series']
+    search_fields = ['title_without_series', 'book_id']
 
 
 # Register your models here.

@@ -3,17 +3,17 @@
 
 <html lang="en">
 <head>
-    <link rel="stylesheet" type="text/css" href="../../../static/style.css" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href=
+    <link rel="stylesheet" type="text/css" href=
     "https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-        <script src=
+    <script src=
     "https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js">
-        </script>
-        <script src=
+    </script>
+    <script src=
     "https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js">
-        </script>
+    </script>
+    <link rel="stylesheet" type="text/css" href="../../../static/style.css" />
     <title>BookRec -
             {% block title_block %}
                 User Perception of Different Recommender Systems
@@ -21,9 +21,24 @@
     </title>
 </head>
 <body>
-    <div>
-        {% block body_block %}
-        {% endblock %}
+    <header class="header">
+        <h1 class="header-title">Survey on User Perception of Differences in Book Recommender Algorithms</h1>
+        <a href="https://www.uni-koblenz.de/de/informatik" target="_blank"> <img src="../../../static/images/UK_FB4_Logo_eng_Schutzraum.png" alt="Logo" class="header-image"></a>
+    </header>
+    <div class="content">
+        {% block body_block %}{% endblock %}
     </div>
+    <footer>
+        <div class="container-footer">
+            <div class="footer-content">
+                <p>&copy; 2023 Clemens Steinmann</p>
+                <p>Contact: csteinmann@uni-koblenz.de</p>
+                <p><a href="https://md.ekstrandom.net/static/pubs/listcmp.pdf" target="_blank">Research inspired by</a></p>
+            </div>
+            <div class="footer-image">
+                <a href="https://www.uni-koblenz.de/de" target="_blank"> <img src="../../../static/images/UK_Pfeil_CMYK.png" alt="Image Description"></a>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>
