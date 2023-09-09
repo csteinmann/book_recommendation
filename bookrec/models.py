@@ -5,7 +5,7 @@ from django.db import models
 class Book(models.Model):
     book_id = models.IntegerField(unique=True)
     title_without_series = models.CharField(max_length=128)
-    book_description = models.CharField(max_length=3000)
+    book_description = models.CharField(max_length=6000)
     publication_year = models.CharField(max_length=128)
     publisher = models.CharField(max_length=128)
     book_average_rating = models.FloatField(null=True)

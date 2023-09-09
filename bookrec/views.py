@@ -2,7 +2,7 @@ import string
 
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
-from bookrec.models import Book, Survey
+from bookrec.models import Book, Survey, Question, Choice, Submission
 from bookrec.forms import SurveyForm
 import csv
 import os
@@ -10,6 +10,7 @@ from pathlib import Path
 import pickle
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+
 
 # Create your views here.
 
@@ -32,6 +33,10 @@ def index(request):
 
     # return render
     return render(request, 'bookrec/index.html', context_dict)
+
+
+def thank_you_view(request):
+    return render(request, 'bookrec/thank_you.html')
 
 
 def create_context_dict() -> dict:

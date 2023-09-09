@@ -53,34 +53,34 @@ def populate_choices():
 
 def populate_questions():
     rotation_list = ['IIUU', 'IIALS', 'UUALS', 'UUII', 'ALSII', 'ALSUU']
-    question_list = ['Based on your first impression, which list do you prefer?',
+    question_list = ['1. Based on your first impression, which list do you prefer?',
                      # line for separation
-                     'Which list has more books that you find appealing?',
-                     'Which list has more books that might be among the best books you read in the next year?',
-                     'Which list has more obviously bad book recommendations for you?',
-                     'Which recommender does a better job of putting better books at the top?',
+                     '2. Which list has more books that you find appealing?',
+                     '3. Which list has more books that might be among the best books you read in the next year?',
+                     '4. Which list has more obviously bad book recommendations for you?',
+                     '5. Which recommender does a better job of putting better books at the top?',
                      # line for separation
-                     'Which list has more books that are similar to each other?',
-                     'Which list has a more varied selection of books?',
-                     'Which list has more books that match a wider variety of moods?',
-                     'Which list would suit a broader set of tastes?',
+                     '6. Which list has more books that are similar to each other?',
+                     '7. Which list has a more varied selection of books?',
+                     '8. Which list has more books that match a wider variety of moods?',
+                     '9. Which list would suit a broader set of tastes?',
                      # line for separation
-                     'Which recommender better understands your taste in books?',
-                     'Which recommender would you trust to provide you with recommendations?',
-                     'Which recommender seems more personalised to your book ratings?',
-                     'Which recommender more represents mainstream tastes instead of your own?',
+                     '10. Which recommender better understands your taste in books?',
+                     '11. Which recommender would you trust to provide you with recommendations?',
+                     '12. Which recommender seems more personalised to your book ratings?',
+                     '13. Which recommender more represents mainstream tastes instead of your own?',
                      # line for separation
-                     'Which recommender would better help you find books to watch?',
-                     'Which recommender would you be more likely to recommend to your friends',
-                     'Which list of recommendations do you find more valuable?',
-                     'Which recommender would you rather have as an app on your mobile phone?',
-                     'Which recommender would better help to pick satisfactory books?',
+                     '14. Which recommender would better help you find books to watch?',
+                     '15. Which recommender would you be more likely to recommend to your friends',
+                     '16. Which list of recommendations do you find more valuable?',
+                     '17. Which recommender would you rather have as an app on your mobile phone?',
+                     '18. Which recommender would better help to pick satisfactory books?',
                      # line for separation
-                     'Which list has more books you do not expect?',
-                     'Which list has more books that are familiar to you?',
-                     'Which list has more pleasantly surprising books?',
-                     'Which list has more books you would not have thought to consider?',
-                     'Which list provides fewer new suggestions?']
+                     '19. Which list has more books you do not expect?',
+                     '20. Which list has more books that are familiar to you?',
+                     '21. Which list has more pleasantly surprising books?',
+                     '22. Which list has more books you would not have thought to consider?',
+                     '23. Which list provides fewer new suggestions?']
     for state in rotation_list:
         s = get_object_or_404(Survey, rotation_state=state)
         for question in question_list:

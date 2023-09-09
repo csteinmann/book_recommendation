@@ -3,10 +3,10 @@
 {%  load static %}
 
 {% block body_block %}
-    <h1>User perception of book recommendation systems</h1>
+    <!--<h1>User perception of book recommendation systems</h1> -->
     <h2>Research scenario</h2>
     <p>
-        Imagine you are a big fan of science-fiction books and are looking for a new book to read. To assist you, you are using the help of four different recommendation systems, each of which has created a top-10 list for you. These lists show books that are recommended based on your interests. The first book in each list represents the system's best-fit recommendation. Clicking on the cover page of each book will open the corresponding GoodReads webpage in a new tab. Please familiarize yourself with each book on the recommended lists and complete the questionnaire afterward.
+        Imagine you are a big fan of science-fiction books and are looking for a new book to read. To assist you, you are using the help of different recommendation systems, each of which has created a top-10 list for you. These lists show books that are recommended based on your interests. The first book in each list represents the system's best-fit recommendation. Clicking on the cover page of each book will open the corresponding GoodReads webpage in a new tab. Please familiarize yourself with each book on the recommended lists and complete the questionnaire afterward.
     </p>
     <div class="container-scrollable">
         <div class="scrollable-content left">
@@ -23,7 +23,7 @@
                                 <strong>{{ book.title_without_series }}</strong><br>
                                 {{ book.publication_year }} published by {{ book.publisher }}<br>
                                 {{ book.book_average_rating }}<br>
-                                <button class="btn btn-dark"
+                                <button class="btn btn-danger"
                                         title="Book description"
                                         data-toggle="popover"
                                         data-trigger="focus"
@@ -50,7 +50,7 @@
                                 <strong>{{ book.title_without_series }}</strong><br>
                                 {{ book.publication_year }} published by {{ book.publisher }}<br>
                                 {{ book.book_average_rating }}<br>
-                                <button class="btn btn-dark"
+                                <button class="btn btn-danger"
                                         title="Book description"
                                         data-toggle="popover"
                                         data-trigger="focus"
@@ -73,7 +73,7 @@
                 There is no survey with that rotation state!
                 {% endif %}
                 <p>
-                    In the following, you need to put yourself in the role of the science fiction book fan described above. So when "you" is mentioned, it refers to the user described in the research scenario, not you as a person. List A and B contain the top movie recommendations for you from different "recommender". Please answer the following questions to help us understand your preferences about these recommenders.
+                    In the following, you need to put yourself in the role of the science fiction book fan described above. So when "you" is mentioned, it refers to the user described in the research scenario, not you as a person. List A and B contain the top book recommendations for you from different "recommender". Please answer the following questions to help us understand your preferences about these recommenders.
                 </p>
                 {{ form.as_p }}
             </div>
