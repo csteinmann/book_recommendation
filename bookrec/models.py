@@ -27,7 +27,6 @@ class Survey(models.Model):
 class Question(models.Model):
     survey = models.ForeignKey(Survey, on_delete=models.PROTECT)
     text = models.CharField(max_length=200)
-    pub_date = models.DateTimeField('date published')
 
     def __str__(self):
         return self.text
