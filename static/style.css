@@ -1,9 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
 
-.column {
-  -moz-column-count: 2; /* For Firefox */
-  -webkit-column-count: 2; /* For Safari/Chrome */
-  column-count: 2; /* For when te standard gets fully supported */
+.center {
+  margin: auto;
+  width: 60%;
+  border: gray;
+  padding: 10px;
 }
 
 .service-list {
@@ -25,33 +26,3 @@ display:inline-block;
 padding: 0;
 }
 
-.bg-modal{
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0,0,0,0.7);
-  position: absolute;
-  top: 0px;
-  z-index: 1;
-  display: none;
-  justify-content: center;
-  align-items: center;
-}
-
-.modal-content{
-  width: 600px;
-  height: 300px;
-  background-color: white;
-  border: none;
-  border-radius: 15px;
-  padding: 15px;
-  position: relative
-}
-
-.close{
-  position: absolute;
-  top: 5px;
-  right:10px;
-  font-size: 25px;
-  transform: rotate(45deg);
-  cursor: pointer;
-}

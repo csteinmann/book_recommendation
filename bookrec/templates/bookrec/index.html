@@ -8,7 +8,7 @@
     <p>
         Imagine you are a big fan of science-fiction books and are looking for a new book to read. To assist you, you are using the help of four different recommendation systems, each of which has created a top-10 list for you. These lists show books that are recommended based on your interests. The first book in each list represents the system's best-fit recommendation. Clicking on the cover page of each book will open the corresponding GoodReads webpage in a new tab. Please familiarize yourself with each book on the recommended lists and complete the questionnaire afterward.
     </p>
-    <div style="float:left; width: 29%">
+    <div style="float:left; width: 30%">
         <h3>List A (10 Books)</h3>
         {% if books_a %}
             <ul>
@@ -35,7 +35,7 @@
             </ul>
         {% endif %}
     </div>
-    <div style="float:left; width: 29%">
+    <div style="float:left; width: 30%">
         <h3>List B (10 Books)</h3>
         {% if books_b %}
             <ul>
@@ -61,6 +61,14 @@
                 {% endfor %}
             </ul>
         {% endif %}
+    </div>
+    <div style="float:right; width: 40%">
+        {% if survey %}
+        <h3>{{ survey.title }}</h3>
+        {% else %}
+        There is no survey with that rotation state!
+        {% endif %}
+        {{ form.as_p }}
     </div>
    <script>
         $('[data-toggle="popover"]').popover();
