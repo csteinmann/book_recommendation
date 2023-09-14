@@ -25,7 +25,17 @@
         <h1 class="header-title">Survey on User Perception of Differences in Book Recommender Algorithms</h1>
         <a href="https://www.uni-koblenz.de/de/informatik" target="_blank"> <img src="../../../static/images/UK_FB4_Logo_eng_Schutzraum.png" alt="Logo" class="header-image"></a>
     </header>
+
     <div class="container-main">
+        {% block messages %}
+        {% if messages %}
+        <ul class="messages {% if message.tags %}{{ message.tags }}{% endif %}">
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endblock %}
         {% block body_block %}{% endblock %}
     </div>
     <footer>

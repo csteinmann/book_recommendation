@@ -16,10 +16,8 @@ body {
   padding-right: 5px;
 }
 
-
-ul {
+.ul-rec-list {
   padding-left: 0;
-  display: inline-block;
 }
 
 .header {
@@ -69,10 +67,15 @@ ul {
   display: inline-block;
 }
 
-.service-list img {
+.img-cover {
   float:left;
   margin: 0;
   padding: 0;
+}
+
+.image-star {
+  width: 20px;
+  height: auto;
 }
 
 .service-list p,.service-list h3 {
@@ -129,3 +132,6 @@ footer {
   text-decoration: underline;
 }
 
+.survey-form input[type="radio"] {
+  display: inline;
+}

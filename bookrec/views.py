@@ -2,7 +2,8 @@ import string
 
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
-from bookrec.models import Book, Survey, Question, Choice, Submission
+from django.contrib import messages
+from bookrec.models import Book, Survey
 from bookrec.forms import SurveyForm
 import csv
 import os
@@ -22,21 +23,33 @@ def index(request):
     current_rotation_state = get_current_rotation_state('rotator_pickle.pk')
     # access survey through the rotation_state
     survey = get_object_or_404(Survey, rotation_state=current_rotation_state)
-    form = SurveyForm(survey)
+    post_data = request.POST if request.method == 'POST' else None
+    survey_form = SurveyForm(survey, post_data)
+
+    if survey_form.is_bound and survey_form.is_valid():
+        survey_form.save()
+        messages.add_message(request, messages.INFO, 'Submissions saved.')
+        return redirect('bookrec_app:thank_you')
 
     # add form and survey to the context_dict
     context_dict['survey'] = survey
-    context_dict['form'] = form
-
-    # IMPORTANT! Rotate the rotation_list; how? look at the docstring inside the function
-    rotate_rotation_list('rotator_pickle.pk')
+    context_dict['survey_form'] = survey_form
 
     # return render
     return render(request, 'bookrec/index.html', context_dict)
 
 
 def thank_you_view(request):
+    # IMPORTANT! Rotate the rotation_list; how? look at the docstring inside the function
+    rotate_rotation_list('rotator_pickle.pk')
     return render(request, 'bookrec/thank_you.html')
+
+
+def handle_survey(request, survey):
+
+
+
+    return survey_form
 
 
 def create_context_dict() -> dict:

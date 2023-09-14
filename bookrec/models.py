@@ -25,7 +25,7 @@ class Survey(models.Model):
 
 
 class Question(models.Model):
-    survey = models.ForeignKey(Survey, on_delete=models.PROTECT)
+    survey = models.ForeignKey(Survey, on_delete=models.CASCADE)
     text = models.CharField(max_length=200)
 
     def __str__(self):

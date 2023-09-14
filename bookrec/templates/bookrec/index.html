@@ -13,16 +13,16 @@
             <div style="float:left; width: 50%">
                 <h3>List A (10 Books)</h3>
                 {% if books_a %}
-                <ul>
+                <ul class="ul-rec-list">
                     {% for book in books_a %}
                         <li class="service-list">
                             <a href="{{ book.book_url }}" target="_blank">
-                                <img src="{{ book.cover_page }}" alt=""/>
+                                <img class="image-cover" src="{{ book.cover_page }}" alt=""/>
                             </a>
                             <p>
                                 <strong>{{ book.title_without_series }}</strong><br>
                                 {{ book.publication_year }} published by {{ book.publisher }}<br>
-                                {{ book.book_average_rating }}<br>
+                                <img class="image-star" src="../../../static/images/5-point-stars-png-star-icon-flat-11562958768wpf63hu4tq.png" alt="star"> {{ book.book_average_rating }}<br>
                                 <button class="btn btn-danger"
                                         title="Book description"
                                         data-toggle="popover"
@@ -40,7 +40,7 @@
             <div style="float:right; width: 50%">
             <h3>List B (10 Books)</h3>
             {% if books_b %}
-                <ul>
+                <ul class="ul-rec-list">
                     {% for book in books_b %}
                         <li class="service-list">
                             <a href="{{ book.book_url }}" target="_blank">
@@ -49,7 +49,7 @@
                             <p>
                                 <strong>{{ book.title_without_series }}</strong><br>
                                 {{ book.publication_year }} published by {{ book.publisher }}<br>
-                                {{ book.book_average_rating }}<br>
+                                <img class="image-star" src="../../../static/images/5-point-stars-png-star-icon-flat-11562958768wpf63hu4tq.png" alt="star"> {{ book.book_average_rating }}<br>
                                 <button class="btn btn-danger"
                                         title="Book description"
                                         data-toggle="popover"
@@ -66,17 +66,12 @@
         </div>
         </div>
         <div class="scrollable-content">
-            <div>
-                {% if survey %}
+            <form action="{% url 'bookrec_app:index' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
                 <h3>{{ survey.title }}</h3>
-                {% else %}
-                There is no survey with that rotation state!
-                {% endif %}
-                <p>
-                    In the following, you need to put yourself in the role of the science fiction book fan described above. So when "you" is mentioned, it refers to the user described in the research scenario, not you as a person. List A and B contain the top book recommendations for you from different "recommender". Please answer the following questions to help us understand your preferences about these recommenders.
-                </p>
-                {{ form.as_p }}
-            </div>
+                {{ survey_form.as_p }}
+                <button type="submit" class="btn btn-info" id="btn">Submit</button>
+            </form>
         </div>
     </div>
    <script>
