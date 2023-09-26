@@ -10,12 +10,18 @@ import os
 from pathlib import Path
 import pickle
 
+# Base directory - used for reading and saving data - avoiding hardcoding the paths
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # Create your views here.
 
 def index(request):
+    return render(request, 'bookrec/index.html', context={})
+
+
+def survey(request):
+    """Handles the program and render logic for the index page (main part of website)"""
     # Initial context_dict (resolves recommendation lists and rotation)
     context_dict = create_context_dict()
     # Code for handling the survey
@@ -23,12 +29,18 @@ def index(request):
     current_rotation_state = get_current_rotation_state('rotator_pickle.pk')
     # access survey through the rotation_state
     survey = get_object_or_404(Survey, rotation_state=current_rotation_state)
+    # get the form data
     post_data = request.POST if request.method == 'POST' else None
+    # create the survey form with current survey (accessed with rotation state) and form data
     survey_form = SurveyForm(survey, post_data)
 
+    # check if form is correct
     if survey_form.is_bound and survey_form.is_valid():
+        # save form with overridden save method
         survey_form.save()
+        # display message that the submission was saved
         messages.add_message(request, messages.INFO, 'Submissions saved.')
+        # redirect to thank you page !important!
         return redirect('bookrec_app:thank_you')
 
     # add form and survey to the context_dict
@@ -36,20 +48,17 @@ def index(request):
     context_dict['survey_form'] = survey_form
 
     # return render
-    return render(request, 'bookrec/index.html', context_dict)
+    return render(request, 'bookrec/survey_page.html', context_dict)
 
 
 def thank_you_view(request):
+    """Handles program and render logic for the thank you page - accessed when filling out the survey and
+    successfully saving the data"""
+
     # IMPORTANT! Rotate the rotation_list; how? look at the docstring inside the function
     rotate_rotation_list('rotator_pickle.pk')
+    # Return render
     return render(request, 'bookrec/thank_you.html')
-
-
-def handle_survey(request, survey):
-
-
-
-    return survey_form
 
 
 def create_context_dict() -> dict:

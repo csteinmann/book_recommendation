@@ -2,79 +2,35 @@
 {% extends 'bookrec/base.html' %}
 {%  load static %}
 
+{% block title_block %}
+    Home
+{% endblock %}
+
 {% block body_block %}
-    <!--<h1>User perception of book recommendation systems</h1> -->
-    <h2>Research scenario</h2>
-    <p>
-        Imagine you are a big fan of science-fiction books and are looking for a new book to read. To assist you, you are using the help of different recommendation systems, each of which has created a top-10 list for you. These lists show books that are recommended based on your interests. The first book in each list represents the system's best-fit recommendation. Clicking on the cover page of each book will open the corresponding GoodReads webpage in a new tab. Please familiarize yourself with each book on the recommended lists and complete the questionnaire afterward.
-    </p>
-    <div class="container-scrollable">
-        <div class="scrollable-content left">
-            <div style="float:left; width: 50%">
-                <h3>List A (10 Books)</h3>
-                {% if books_a %}
-                <ul class="ul-rec-list">
-                    {% for book in books_a %}
-                        <li class="service-list">
-                            <a href="{{ book.book_url }}" target="_blank">
-                                <img class="image-cover" src="{{ book.cover_page }}" alt=""/>
-                            </a>
-                            <p>
-                                <strong>{{ book.title_without_series }}</strong><br>
-                                {{ book.publication_year }} published by {{ book.publisher }}<br>
-                                <img class="image-star" src="../../../static/images/5-point-stars-png-star-icon-flat-11562958768wpf63hu4tq.png" alt="star"> {{ book.book_average_rating }}<br>
-                                <button class="btn btn-danger"
-                                        title="Book description"
-                                        data-toggle="popover"
-                                        data-trigger="focus"
-                                        data-content="{{ book.book_description }}"
-                                        data-placement="bottom">
-                                    Book description
-                                </button>
-                                </p>
-                            </li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-        </div>
-            <div style="float:right; width: 50%">
-            <h3>List B (10 Books)</h3>
-            {% if books_b %}
-                <ul class="ul-rec-list">
-                    {% for book in books_b %}
-                        <li class="service-list">
-                            <a href="{{ book.book_url }}" target="_blank">
-                                <img src="{{ book.cover_page }}" alt=""/>
-                            </a>
-                            <p>
-                                <strong>{{ book.title_without_series }}</strong><br>
-                                {{ book.publication_year }} published by {{ book.publisher }}<br>
-                                <img class="image-star" src="../../../static/images/5-point-stars-png-star-icon-flat-11562958768wpf63hu4tq.png" alt="star"> {{ book.book_average_rating }}<br>
-                                <button class="btn btn-danger"
-                                        title="Book description"
-                                        data-toggle="popover"
-                                        data-trigger="focus"
-                                        data-content="{{ book.book_description }}"
-                                        data-placement="bottom">
-                                    Book description
-                                </button>
-                            </p>
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-        </div>
-        </div>
-        <div class="scrollable-content">
-            <form action="{% url 'bookrec_app:index' %}" method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
-                <h3>{{ survey.title }}</h3>
-                {{ survey_form.as_p }}
-                <button type="submit" class="btn btn-info" id="btn">Submit</button>
-            </form>
-        </div>
+    <div class="center-container">
+        <h2>Research scenario</h2>
     </div>
-   <script>
-        $('[data-toggle="popover"]').popover();
-   </script>
+    <strong>First, please carefully review the research scenario, and then proceed to the survey.</strong>
+    <br><br>
+    <p>
+        Imagine you are a big fan of science-fiction books and are currently looking for a new book to read. You've already read
+        <a href="https://www.goodreads.com/book/show/543082.Frankenstein" target="_blank">Frankenstein</a>,
+        <a href="https://www.goodreads.com/book/show/4541271-foundation" target="_blank">Foundation</a>,
+        <a href="https://www.goodreads.com/book/show/8493755-the-stars-my-destination" target="_blank">The Stars my Destination</a>,
+        <a href="https://www.goodreads.com/book/show/18747125-solaris" target="_blank">Solaris</a>,
+        <a href="https://www.goodreads.com/book/show/1685995.Dune" target="_blank">Dune</a>,
+        <a href="https://www.goodreads.com/book/show/16690.The_Moon_is_a_Harsh_Mistress" target="_blank">The Moon is a Harsh Mistress</a>,
+        <a href="https://www.goodreads.com/book/show/9732198-hyperion" target="_blank">Hyperion</a>, and
+        <a href="https://www.goodreads.com/book/show/3338617-jurassic-park" target="_blank">Jurassic Park</a>. You gave them each a good rating (4-5 stars).
+        To assist you, you are using the help of different recommendation systems, each of which has created a <strong>top-10</strong> list for you.
+        The first book in each list represents the system's best-fit recommendation.
+        To access <strong>more details</strong>, simply click on the cover page of each book, which will open the respective GoodReads webpage in a new tab.
+        Please <strong>familiarize yourself</strong> with each book on the lists and complete the <strong>questionnaire afterward</strong>.
+    </p><br>
+    <div class="center-container">
+        <strong>To the survey:</strong>
+    </div>
+    <div class="center-container">
+        <button class="btn btn-danger" onclick="window.location.href='{% url 'bookrec_app:survey' %}'">Survey</button>
+    </div>
 {% endblock %}

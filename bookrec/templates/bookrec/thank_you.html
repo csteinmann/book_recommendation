@@ -7,5 +7,19 @@ Thank You
 {% endblock %}
 
 {% block body_block %}
-<h1>Thank You for Taking the Survey!</h1>
+    <div class="center-container">
+        <h1>Thank You for Taking the Survey!</h1>
+    </div>
+    <div class="center-container">
+    <p>
+        If you're willing to contribute further to the study, you can participate again by clicking the button below.
+        You will, of course, be presented with a different set of recommendations.
+    </p>
+    </div><br>
+    <div class="center-container">
+        <strong>Back to the survey</strong>
+    </div>
+    <div class="center-container">
+        <button class="btn btn-info" onclick="window.location.href='{% url 'bookrec_app:survey' %}'">Survey</button>
+    </div>
 {% endblock %}

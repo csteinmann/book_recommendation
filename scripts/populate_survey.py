@@ -70,17 +70,19 @@ def populate_questions():
                      '12. Which recommender seems more personalised to your book ratings?',
                      '13. Which recommender more represents mainstream tastes instead of your own?',
                      # line for separation
-                     '14. Which recommender would better help you find books to watch?',
-                     '15. Which recommender would you be more likely to recommend to your friends',
-                     '16. Which list of recommendations do you find more valuable?',
-                     '17. Which recommender would you rather have as an app on your mobile phone?',
-                     '18. Which recommender would better help to pick satisfactory books?',
+                     '14. Choose the third option',
                      # line for separation
-                     '19. Which list has more books you do not expect?',
-                     '20. Which list has more books that are familiar to you?',
-                     '21. Which list has more pleasantly surprising books?',
-                     '22. Which list has more books you would not have thought to consider?',
-                     '23. Which list provides fewer new suggestions?']
+                     '15. Which recommender would better help you find books to watch?',
+                     '16. Which recommender would you be more likely to recommend to your friends',
+                     '17. Which list of recommendations do you find more valuable?',
+                     '18. Which recommender would you rather have as an app on your mobile phone?',
+                     '19. Which recommender would better help to pick satisfactory books?',
+                     # line for separation
+                     '20. Which list has more books you do not expect?',
+                     '21. Which list has more books that are familiar to you?',
+                     '22. Which list has more pleasantly surprising books?',
+                     '23. Which list has more books you would not have thought to consider?',
+                     '24. Which list provides fewer new suggestions?']
     for state in rotation_list:
         s = get_object_or_404(Survey, rotation_state=state)
         for question in question_list:

@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    #'bookrec.apps.BookrecConfig',
     'django_extensions',
     'bookrec'
 ]

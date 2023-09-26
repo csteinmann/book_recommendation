@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+{% extends 'bookrec/base.html' %}
+{%  load static %}
+
+{% block title_block %}
+    Survey
+{% endblock %}
+
+{% block body_block %}
+    <div class="container-scrollable">
+        <div class="scrollable-content left">
+            <div style="float:left; width: 50%">
+                <h3>List A (10 Books)</h3>
+                {% if books_a %}
+                <ul class="ul-rec-list">
+                    {% for book in books_a %}
+                        <li class="service-list">
+                            <a href="{{ book.book_url }}" target="_blank">
+                                <img class="image-cover" src="{{ book.cover_page }}" alt=""/>
+                            </a>
+                            <p>
+                                <strong>{{ book.title_without_series }}</strong><br>
+                                {{ book.publication_year }} published by {{ book.publisher }}<br>
+                                <img class="image-star" src="../../../static/images/5-point-stars-png-star-icon-flat-11562958768wpf63hu4tq.png" alt="star"> {{ book.book_average_rating }}<br>
+                                <button class="btn btn-danger"
+                                        title="Book description"
+                                        data-toggle="popover"
+                                        data-trigger="focus"
+                                        data-content="{{ book.book_description }}"
+                                        data-placement="bottom">
+                                    Book description
+                                </button>
+                                </p>
+                            </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+            <div style="float:right; width: 50%">
+            <h3>List B (10 Books)</h3>
+            {% if books_b %}
+                <ul class="ul-rec-list">
+                    {% for book in books_b %}
+                        <li class="service-list">
+                            <a href="{{ book.book_url }}" target="_blank">
+                                <img src="{{ book.cover_page }}" alt=""/>
+                            </a>
+                            <p>
+                                <strong>{{ book.title_without_series }}</strong><br>
+                                {{ book.publication_year }} published by {{ book.publisher }}<br>
+                                <img class="image-star" src="../../../static/images/5-point-stars-png-star-icon-flat-11562958768wpf63hu4tq.png" alt="star"> {{ book.book_average_rating }}<br>
+                                <button class="btn btn-danger"
+                                        title="Book description"
+                                        data-toggle="popover"
+                                        data-trigger="focus"
+                                        data-content="{{ book.book_description }}"
+                                        data-placement="bottom">
+                                    Book description
+                                </button>
+                            </p>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        </div>
+        <div class="scrollable-content">
+            <form action="{% url 'bookrec_app:index' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <h3>{{ survey.title }}</h3>
+                <p>
+                    In the following, you need to <strong>put yourself in the role of the science fiction book fan described</strong> in the research scenario before. So when "you" is mentioned,
+                    it refers to the user described, not you as a person. Please fill out the questionnaire and save your answers by clicking the button under the last question to help us understand
+                    your preferences about these recommenders.
+                </p>
+                {{ survey_form.as_p }}
+                <button type="submit" class="btn btn-info" id="btn">Submit</button>
+            </form>
+        </div>
+    </div>
+   <script>
+        $('[data-toggle="popover"]').popover();
+   </script>
+{% endblock %}
