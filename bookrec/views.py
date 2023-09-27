@@ -62,10 +62,10 @@ def thank_you_view(request):
     return render(request, 'bookrec/thank_you.html')
 
 
-def log_button_click(request):
+def logging_view(request):
     if request.method == "POST":
         message = request.POST.get("message")
-        logging.info(f"Clicker: {message}")
+        logging.info(f"User Interaction: {message}")
         return JsonResponse({"status": "ok"})
     else:
         return JsonResponse({"status": "error", "message": "Invalid request method"})
