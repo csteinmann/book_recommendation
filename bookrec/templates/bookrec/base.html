@@ -50,6 +50,10 @@
             $(document).ready(function () {
                 // Get the CSRF token from the cookies
                 const csrftoken = document.cookie.match(/csrftoken=([^ ;]+)/)[1];
+                const scrollableContainer = document.getElementById('scrollable-lists');
+                if (scrollableContainer) {
+                    scrollableContainer.addEventListener('scroll', logScrollEvent);
+                }
 
                 // Generate a unique session ID if not already stored in local storage
                 let sessionId = localStorage.getItem('sessionId');
@@ -63,9 +67,16 @@
                     return Math.random().toString(36).substring(2, 10); // Adjust length as needed
                 }
 
+                // Function to generate Timestamp
                 function getTimestamp() {
                     const now = new Date();
                     return now.toISOString();
+                }
+
+                // Function to logg scrolling
+                function logScrollEvent() {
+                    const scrollTop = event.target.scrollTop;
+                    logMessage(`Scrolled to position: ${scrollTop}px`);
                 }
 
                 // Function to log a message
