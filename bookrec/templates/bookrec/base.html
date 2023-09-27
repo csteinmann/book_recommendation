@@ -2,48 +2,119 @@
 {% load static %}
 
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="../../../static/style.css" />
-    <title>BookRec -
-            {% block title_block %}
-                User Perception of Different Recommender Systems
-            {% endblock %}
-    </title>
-</head>
-<body>
-    <header class="header">
-        <h1 class="header-title">Survey on User Perception of Differences in Book Recommender Algorithms</h1>
-        <a href="https://www.uni-koblenz.de/de/informatik" target="_blank"> <img src="../../../static/images/UK_FB4_Logo_eng_Schutzraum.png" alt="Logo" class="header-image"></a>
-    </header>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="../../../static/style.css" />
+        <title>BookRec -
+                {% block title_block %}
+                    User Perception of Different Recommender Systems
+                {% endblock %}
+        </title>
+    </head>
+    <body>
+        <header class="header">
+            <h1 class="header-title">Survey on User Perception of Differences in Book Recommender Algorithms</h1>
+            <a href="https://www.uni-koblenz.de/de/informatik" target="_blank"> <img src="../../../static/images/UK_FB4_Logo_eng_Schutzraum.png" alt="Logo" class="header-image" data-title="University Logo Header"></a>
+        </header>
 
-    <div class="container-main">
-        {% block messages %}
-        {% if messages %}
-        <ul class="messages {% if message.tags %}{{ message.tags }}{% endif %}">
-            {% for message in messages %}
-            <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-        {% endif %}
-        {% endblock %}
-        {% block body_block %}{% endblock %}
-    </div>
-    <footer>
-        <div class="container-footer">
-            <div class="footer-content">
-                <p>&copy; 2023 Clemens Steinmann</p>
-                <p>Contact: csteinmann@uni-koblenz.de</p>
-                <p><a href="https://md.ekstrandom.net/static/pubs/listcmp.pdf" target="_blank">Research inspired by</a></p>
-            </div>
-            <div class="footer-image">
-                <a href="https://www.uni-koblenz.de/de/informatik/west/team/professors/frank-hopfgartner" target="_blank"> <img src="../../../static/images/UK_Pfeil_CMYK.png" alt="Image Description"></a>
-            </div>
+        <div class="container-main">
+            {% block messages %}
+            {% if messages %}
+            <ul class="messages {% if message.tags %}{{ message.tags }}{% endif %}">
+                {% for message in messages %}
+                <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            {% endblock %}
+            {% block body_block %}{% endblock %}
         </div>
-    </footer>
-</body>
+        <footer>
+            <div class="container-footer">
+                <div class="footer-content">
+                    <p>&copy; 2023 Clemens Steinmann</p>
+                    <p>Contact: csteinmann@uni-koblenz.de</p>
+                    <p><a href="https://md.ekstrandom.net/static/pubs/listcmp.pdf" target="_blank" data-title="Source Ekstrand">Research inspired by</a></p>
+                </div>
+                <div class="footer-image">
+                    <a href="https://www.uni-koblenz.de/de/informatik/west/" target="_blank"> <img src="../../../static/images/UK_Pfeil_CMYK.png" alt="Image Description" data-title="University Arrow Footer"></a>
+                </div>
+            </div>
+        </footer>
+        <script>
+            // JavaScript code for handling button click and image click logging
+            $(document).ready(function () {
+                // Get the CSRF token from the cookies
+                const csrftoken = document.cookie.match(/csrftoken=([^ ;]+)/)[1];
+
+                // Generate a unique session ID if not already stored in local storage
+                let sessionId = localStorage.getItem('sessionId');
+                if (!sessionId) {
+                    sessionId = generateSessionId();
+                    localStorage.setItem('sessionId', sessionId);
+                }
+
+                // Function to generate a random session ID
+                function generateSessionId() {
+                    return Math.random().toString(36).substring(2, 10); // Adjust length as needed
+                }
+
+                function getTimestamp() {
+                    const now = new Date();
+                    return now.toISOString();
+                }
+
+                // Function to log a message
+                function logMessage(message) {
+                    // Log the message with the session ID
+                    const logMessage = `Session ID: ${sessionId} Time: ${getTimestamp()} - ${message}`;
+                    console.log(logMessage);
+
+                    // Send an AJAX request to log the event on the server
+                    $.ajax({
+                        type: "POST",
+                        url: "{% url 'bookrec_app:log_button_click' %}",  // Replace with your Django URL
+                        data: { message: logMessage },
+                        beforeSend: function(xhr, settings) {
+                            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                        },
+                        success: function (response) {
+                            console.log("Log sent successfully.");
+                        },
+                        error: function (error) {
+                            console.error("Error sending log: " + error);
+                        }
+                    });
+                }
+
+                // Use event delegation to handle clicks on buttons with the "descriptionButton" class
+                $(document).on("click", ".loggingButton", function () {
+                    // Get the title from the data-title attribute of the clicked button
+                    const title = $(this).data("title");
+                    // Log the button click event
+                    logMessage(`Button clicked: ${title}`);
+                })
+
+                // Add a click event listener for cover images
+                $(document).on("click", "img[data-title]", function () {
+                    // Get the book ID from the data-book-id attribute of the clicked image
+                    const imageTitle = $(this).data("title");
+                    // Log the image click event
+                    logMessage(`Image clicked for Title: ${imageTitle}`);
+                });
+
+                // Add a click event listener for Links
+                $(document).on("click", "a[data-title]", function () {
+                    // Get the book ID from the data-book-id attribute of the clicked image
+                    const linkTitle = $(this).data("title");
+                    // Log the image click event
+                    logMessage(`Link clicked for Title: ${linkTitle}`);
+                });
+            });
+        </script>
+    </body>
 </html>

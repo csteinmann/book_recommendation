@@ -16,13 +16,13 @@
                     {% for book in books_a %}
                         <li class="service-list">
                             <a href="{{ book.book_url }}" target="_blank">
-                                <img class="image-cover" src="{{ book.cover_page }}" alt=""/>
+                                <img src="{{ book.cover_page }}" alt="" data-title="{{ book.title_without_series }}"/>
                             </a>
                             <p>
                                 <strong>{{ book.title_without_series }}</strong><br>
                                 {{ book.publication_year }} published by {{ book.publisher }}<br>
                                 <img class="image-star" src="../../../static/images/5-point-stars-png-star-icon-flat-11562958768wpf63hu4tq.png" alt="star"> {{ book.book_average_rating }}<br>
-                                <button class="descriptionButton btn btn-danger"
+                                <button class="loggingButton btn btn-danger"
                                         title="Book Description"
                                         data-toggle="popover"
                                         data-trigger="focus"
@@ -44,13 +44,13 @@
                     {% for book in books_b %}
                         <li class="service-list">
                             <a href="{{ book.book_url }}" target="_blank">
-                                <img src="{{ book.cover_page }}" alt=""/>
+                                <img src="{{ book.cover_page }}" alt="" data-title="{{ book.title_without_series }}"/>
                             </a>
                             <p>
                                 <strong>{{ book.title_without_series }}</strong><br>
                                 {{ book.publication_year }} published by {{ book.publisher }}<br>
                                 <img class="image-star" src="../../../static/images/5-point-stars-png-star-icon-flat-11562958768wpf63hu4tq.png" alt="star"> {{ book.book_average_rating }}<br>
-                                 <button class="descriptionButton btn btn-danger"
+                                 <button class="loggingButton btn btn-danger"
                                         title="Book Description"
                                         data-toggle="popover"
                                         data-trigger="focus"
@@ -76,43 +76,9 @@
                     your preferences about these recommenders.
                 </p>
                 {{ survey_form.as_p }}
-                <button type="submit" class="btn btn-info" id="btn">Submit</button>
+                <button type="submit" class="loggingButton btn btn-info" id="btn" data-title="Submit Button">Submit</button>
             </form>
         </div>
     </div>
     <script>$('[data-toggle="popover"]').popover();</script>
-    <script>
-        // JavaScript code for handling button click and logging
-        $(document).ready(function () {
-            // Get the CSRF token from the cookies
-            const csrftoken = document.cookie.match(/csrftoken=([^ ;]+)/)[1];
-
-            function getTimestamp() {
-                const now = new Date();
-                const formattedDate = now.toISOString();
-                return formattedDate;
-            }
-            // Use event delegation to handle clicks on buttons with the "descriptionButton" class
-            $(document).on("click", ".descriptionButton", function () {
-            // Log a message when a button is clicked
-                console.log(getTimestamp() + " - Button clicked: " + $(this).data("title"));
-
-                // Send an AJAX request to log the event on the server
-                $.ajax({
-                       type: "POST",
-                       url: "{% url 'bookrec_app:log_button_click' %}",
-                       data: { message: getTimestamp() + " - Button clicked: " + $(this).data("title") },
-                       beforeSend: function(xhr, settings) {
-                           xhr.setRequestHeader("X-CSRFToken", csrftoken);
-                       },
-                       success: function (response) {
-                           console.log("Log sent successfully.");
-                       },
-                       error: function (error) {
-                           console.error("Error sending log: " + error);
-                       }
-                });
-            });
-        });
-    </script>
 {% endblock %}

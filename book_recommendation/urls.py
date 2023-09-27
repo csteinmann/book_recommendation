@@ -19,6 +19,7 @@ from django.urls import include
 from bookrec import views
 
 urlpatterns = [
-                  path('bookrec/', include('bookrec.urls')),
-                  path('admin/', admin.site.urls),
-              ]
+    path('', views.index_view),
+    path('bookrec/', include('bookrec.urls')),
+    path('admin/', admin.site.urls),
+]

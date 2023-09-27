@@ -65,7 +65,7 @@ def thank_you_view(request):
 def log_button_click(request):
     if request.method == "POST":
         message = request.POST.get("message")
-        logging.info(f"Description Button: {message}")
+        logging.info(f"Clicker: {message}")
         return JsonResponse({"status": "ok"})
     else:
         return JsonResponse({"status": "error", "message": "Invalid request method"})

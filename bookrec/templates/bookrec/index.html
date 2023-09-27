@@ -31,6 +31,10 @@
         <strong>To the survey:</strong>
     </div>
     <div class="center-container">
-        <button class="btn btn-danger" onclick="window.location.href='{% url 'bookrec_app:survey' %}'">Survey</button>
+        <button class="loggingButton btn btn-danger"
+                onclick="window.location.href='{% url 'bookrec_app:survey' %}'"
+                data-title="To Survey Index">
+            Survey
+        </button>
     </div>
 {% endblock %}

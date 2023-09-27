@@ -20,6 +20,10 @@ Thank You
         <strong>Back to the survey</strong>
     </div>
     <div class="center-container">
-        <button class="btn btn-info" onclick="window.location.href='{% url 'bookrec_app:survey' %}'">Survey</button>
+        <button class="loggingButton btn btn-info"
+                onclick="window.location.href='{% url 'bookrec_app:survey' %}'"
+                data-title="Back to Survey Thank You">
+            Survey
+        </button>
     </div>
 {% endblock %}
