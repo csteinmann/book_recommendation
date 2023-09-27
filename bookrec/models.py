@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
 # Create your models here.
@@ -44,3 +45,6 @@ class Submission(models.Model):
     survey = models.ForeignKey(Survey, on_delete=models.PROTECT)
     answer = models.ManyToManyField(Choice)
     status = models.CharField(max_length=200)
+    rotation_state = models.CharField(max_length=128, blank=True, null=True)
+
+

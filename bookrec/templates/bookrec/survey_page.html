@@ -22,12 +22,13 @@
                                 <strong>{{ book.title_without_series }}</strong><br>
                                 {{ book.publication_year }} published by {{ book.publisher }}<br>
                                 <img class="image-star" src="../../../static/images/5-point-stars-png-star-icon-flat-11562958768wpf63hu4tq.png" alt="star"> {{ book.book_average_rating }}<br>
-                                <button class="btn btn-danger"
-                                        title="Book description"
+                                <button class="descriptionButton btn btn-danger"
+                                        title="Book Description"
                                         data-toggle="popover"
                                         data-trigger="focus"
                                         data-content="{{ book.book_description }}"
-                                        data-placement="bottom">
+                                        data-placement="bottom"
+                                        data-title="{{ book.title_without_series }} Description">
                                     Book description
                                 </button>
                                 </p>
@@ -49,12 +50,13 @@
                                 <strong>{{ book.title_without_series }}</strong><br>
                                 {{ book.publication_year }} published by {{ book.publisher }}<br>
                                 <img class="image-star" src="../../../static/images/5-point-stars-png-star-icon-flat-11562958768wpf63hu4tq.png" alt="star"> {{ book.book_average_rating }}<br>
-                                <button class="btn btn-danger"
-                                        title="Book description"
+                                 <button class="descriptionButton btn btn-danger"
+                                        title="Book Description"
                                         data-toggle="popover"
                                         data-trigger="focus"
                                         data-content="{{ book.book_description }}"
-                                        data-placement="bottom">
+                                        data-placement="bottom"
+                                        data-title="{{ book.title_without_series }} Description">
                                     Book description
                                 </button>
                             </p>
@@ -65,7 +67,7 @@
         </div>
         </div>
         <div class="scrollable-content">
-            <form action="{% url 'bookrec_app:index' %}" method="POST" enctype="multipart/form-data">
+            <form action="{% url 'bookrec_app:survey' %}" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
                 <h3>{{ survey.title }}</h3>
                 <p>
@@ -78,7 +80,39 @@
             </form>
         </div>
     </div>
-   <script>
-        $('[data-toggle="popover"]').popover();
-   </script>
+    <script>$('[data-toggle="popover"]').popover();</script>
+    <script>
+        // JavaScript code for handling button click and logging
+        $(document).ready(function () {
+            // Get the CSRF token from the cookies
+            const csrftoken = document.cookie.match(/csrftoken=([^ ;]+)/)[1];
+
+            function getTimestamp() {
+                const now = new Date();
+                const formattedDate = now.toISOString();
+                return formattedDate;
+            }
+            // Use event delegation to handle clicks on buttons with the "descriptionButton" class
+            $(document).on("click", ".descriptionButton", function () {
+            // Log a message when a button is clicked
+                console.log(getTimestamp() + " - Button clicked: " + $(this).data("title"));
+
+                // Send an AJAX request to log the event on the server
+                $.ajax({
+                       type: "POST",
+                       url: "{% url 'bookrec_app:log_button_click' %}",
+                       data: { message: getTimestamp() + " - Button clicked: " + $(this).data("title") },
+                       beforeSend: function(xhr, settings) {
+                           xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                       },
+                       success: function (response) {
+                           console.log("Log sent successfully.");
+                       },
+                       error: function (error) {
+                           console.error("Error sending log: " + error);
+                       }
+                });
+            });
+        });
+    </script>
 {% endblock %}

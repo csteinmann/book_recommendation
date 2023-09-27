@@ -3,7 +3,7 @@ from bookrec.models import Submission, Choice
 
 
 class SurveyForm(forms.Form):
-    """SurveyForm handling user input filling out the survey"""
+    """SurveyForm handling user input"""
     # initially needed later - the question fields are dynamically created
     question_1 = forms.ChoiceField(label="question text", widget=forms.RadioSelect, choices=())
 
@@ -19,6 +19,7 @@ class SurveyForm(forms.Form):
     def save(self):
         data = self.cleaned_data
         submission = Submission(survey=self.survey)
+        submission.rotation_state = self.survey.rotation_state
         submission.save()
         for question in self.survey.question_set.all():
             choice = Choice.objects.get(pk=data[f"question_{question.id}"])
