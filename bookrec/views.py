@@ -62,9 +62,10 @@ def thank_you_view(request):
 
 
 def logging_view(request):
+    logger = logging.getLogger('BookRec')
     if request.method == "POST":
         message = request.POST.get("message")
-        logging.info(f"User Interaction: {message}")
+        logger.info(f"User Interaction: {message}")
         return JsonResponse({"status": "ok"})
     else:
         return JsonResponse({"status": "error", "message": "Invalid request method"})

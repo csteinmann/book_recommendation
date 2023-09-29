@@ -18,12 +18,6 @@ $(document).ready(function () {
         return Math.random().toString(36).substring(2, 10); // Adjust length as needed
     }
 
-    // Function to generate Timestamp
-    function getTimestamp() {
-        const now = new Date();
-        return now.toISOString();
-    }
-
     // Function to logg scrolling
     function logScrollEvent() {
         const scrollTop = event.target.scrollTop;
@@ -34,7 +28,7 @@ $(document).ready(function () {
     function logMessage(message) {
         // Log the message with the session ID
         const url = '/bookrec/logging/'
-        const logMessage = `Session ID: ${sessionId} Time: ${getTimestamp()} - ${message}`;
+        const logMessage = `Session ID: ${sessionId} - ${message}`;
         console.log(logMessage);
 
         // Send an AJAX request to log the event on the server
