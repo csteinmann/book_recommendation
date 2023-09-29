@@ -17,8 +17,17 @@ from bookrec.models import Survey, Choice, Question
 
 
 def populate():
+    populate_survey()
     populate_questions()
     populate_choices()
+
+
+def add_survey(title, rotation_state):
+    s = Survey()
+    s.title = title
+    s.rotation_state = rotation_state
+    s.save()
+    return s
 
 
 def add_question(survey, text):
@@ -35,6 +44,15 @@ def add_choice(question, text):
     c.text = text
     c.save()
     return c
+
+
+def populate_survey():
+    add_survey("Survey IIUU (24 Questions)", "IIUU")
+    add_survey("Survey IIALS (24 Questions)", "IIALS")
+    add_survey("Survey UUALS (24 Questions)", "UUALS")
+    add_survey("Survey UUII (24 Questions)", "UUII")
+    add_survey("Survey ALSII (24 Questions)", "ALSII")
+    add_survey("Survey ALSUU (24 Questions)", "ALSUU")
 
 
 def populate_choices():
