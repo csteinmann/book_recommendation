@@ -21,7 +21,7 @@
                             <p>
                                 <strong>{{ book.title_without_series }}</strong><br>
                                 {{ book.publication_year }} published by {{ book.publisher }}<br>
-                                <img class="image-star" src="../../../static/images/5-point-stars-png-star-icon-flat-11562958768wpf63hu4tq.png" alt="star"> {{ book.book_average_rating }}<br>
+                                <img class="image-star" src="{% static 'images/5-point-stars-png-star-icon-flat-11562958768wpf63hu4tq.png' %}" alt="star"> {{ book.book_average_rating }}<br>
                                 <button class="loggingButton btn btn-danger"
                                         title="Book Description"
                                         data-toggle="popover"
@@ -49,7 +49,7 @@
                             <p>
                                 <strong>{{ book.title_without_series }}</strong><br>
                                 {{ book.publication_year }} published by {{ book.publisher }}<br>
-                                <img class="image-star" src="../../../static/images/5-point-stars-png-star-icon-flat-11562958768wpf63hu4tq.png" alt="star"> {{ book.book_average_rating }}<br>
+                                <img class="image-star" src="{% static 'images/5-point-stars-png-star-icon-flat-11562958768wpf63hu4tq.png' %}" alt="star"> {{ book.book_average_rating }}<br>
                                  <button class="loggingButton btn btn-danger"
                                         title="Book Description"
                                         data-toggle="popover"
