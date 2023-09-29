@@ -122,15 +122,21 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'handlers': {
-        'file': {
+        'papertrail': {
             'level': 'INFO',
-            'class': 'logging.FileHandler',
-            'filename': 'button_clicks.log',  # Change the file name and path as needed
+            'class': 'logging.handlers.SysLogHandler',
+            'address': ('logs6.papertrailapp.com', 31458),
+            'formatter': 'verbose',
         },
     },
     'root': {
-        'handlers': ['file'],
+        'handlers': ['papertrail'],
         'level': 'INFO',
+    },
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(message)s',
+        },
     },
 }
 
