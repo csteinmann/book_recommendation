@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 {% extends 'bookrec/base.html' %}
 {%  load static %}
-
+{% load crispy_forms_filters %}
 {% block title_block %}
     Survey
 {% endblock %}
@@ -67,7 +67,7 @@
         </div>
         </div>
         <div class="scrollable-content">
-            <form action="{% url 'bookrec_app:survey' %}" method="POST" enctype="multipart/form-data">
+            <form action="{% url 'bookrec_app:survey' %}" method="POST">
                 {% csrf_token %}
                 <h3>{{ survey.title }}</h3>
                 <p>
@@ -76,7 +76,9 @@
                     your preferences about these recommenders.
                 </p>
                 {{ survey_form.as_p }}
-                <button type="submit" class="loggingButton btn btn-info" id="btn" data-title="Submit Button">Submit</button>
+                <!-- Creating a hidden field which contains the sessionId created by the logging.js file- It is also set there-->
+                <input type="hidden" name="sessionId" id="sessionIdField" value="">
+                <button type="submit" class="loggingButton btn btn-info" id="btn" data-title="Submit Questionnaire">Submit</button>
             </form>
         </div>
     </div>

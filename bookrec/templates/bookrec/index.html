@@ -1,40 +1,25 @@
 <!DOCTYPE html>
 {% extends 'bookrec/base.html' %}
-{%  load static %}
+{% load crispy_forms_filters %}
 
 {% block title_block %}
     Home
 {% endblock %}
-
 {% block body_block %}
-    <div class="center-container">
-        <h2>Research scenario</h2>
-    </div>
-    <strong>First, please carefully review the research scenario, and then proceed to the survey.</strong>
-    <br><br>
     <p>
-        Imagine you are a big fan of science-fiction books and are currently looking for a new book to read. You've already read
-        <a href="https://www.goodreads.com/book/show/543082.Frankenstein" target="_blank" data-title="Frankenstein Goodreads">Frankenstein</a>,
-        <a href="https://www.goodreads.com/book/show/4541271-foundation" target="_blank" data-title="Foundation Goodreads">Foundation</a>,
-        <a href="https://www.goodreads.com/book/show/8493755-the-stars-my-destination" target="_blank" data-title="The Stars my Destination Goodreads">The Stars my Destination</a>,
-        <a href="https://www.goodreads.com/book/show/18747125-solaris" target="_blank" data-title="Solaris">Solaris</a>,
-        <a href="https://www.goodreads.com/book/show/1685995.Dune" target="_blank" data-title="Dune">Dune</a>,
-        <a href="https://www.goodreads.com/book/show/16690.The_Moon_is_a_Harsh_Mistress" target="_blank" data-title="The Moon is a Harsh Mistress">The Moon is a Harsh Mistress</a>,
-        <a href="https://www.goodreads.com/book/show/9732198-hyperion" target="_blank" data-title="Hyperion">Hyperion</a>, and
-        <a href="https://www.goodreads.com/book/show/3338617-jurassic-park" target="_blank" data-title="Jurassic Park">Jurassic Park</a>. You gave them each a good rating (4-5 stars).
-        To assist you, you are using the help of different recommendation systems, each of which has created a <strong>top-10</strong> list for you.
-        The first book in each list represents the system's best-fit recommendation.
-        To access <strong>more details</strong>, simply click on the cover page of each book, which will open the respective GoodReads webpage in a new tab.
-        Please <strong>familiarize yourself</strong> with each book on the lists and complete the <strong>questionnaire afterward</strong>.
-    </p><br>
-    <div class="center-container">
-        <strong>To the survey:</strong>
-    </div>
-    <div class="center-container">
-        <button class="loggingButton btn btn-danger"
-                onclick="window.location.href='{% url 'bookrec_app:survey' %}'"
-                data-title="To Survey Index">
-            Survey
-        </button>
-    </div>
+    <strong>Dear Participant,</strong> <br>
+        Thank you for taking the time to participate in our survey on user perception of book recommender algorithms.
+        Your valuable insights will contribute significantly to our research in this field. Before you proceed,
+        we kindly request that you <strong>conscientiously complete the demographics form</strong>,
+        as this information will aid us in better understanding the diverse perspectives of our participants.
+        Please be assured that <strong>all data collected will be kept strictly anonymous and will solely be used for research purposes</strong>,
+        maintaining your privacy and confidentiality throughout the study.
+        Upon submitting your data, you will be redirected to a detailed description of the research scenario.
+        Your input is highly appreciated, and we look forward to gaining valuable insights from your responses.
+    </p>
+    <form method="POST">
+        {% csrf_token %}
+        {{ demographic_form|crispy }}
+        <button type="submit" class="loggingButton btn btn-info" id="btn" data-title="Submit Demographics">Submit</button>
+    </form>
 {% endblock %}

@@ -1,10 +1,9 @@
 import string
-
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from bookrec.models import Book, Survey
-from bookrec.forms import SurveyForm
+from bookrec.forms import CombinedForm, DemographicForm
 import csv
 import os
 from pathlib import Path
@@ -13,31 +12,57 @@ import logging
 
 # Base directory - used for reading and saving data - avoiding hardcoding the paths
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+logger = logging.getLogger('BookRec')
 
 # Create your views here.
 
 def index_view(request):
-    return render(request, 'bookrec/index.html', context={})
+    """View for the index page and demographic data of the participant"""
+    # Receive post data if request.method is Post id not post_data is None
+    post_data = request.POST if request.method == 'POST' else None
+    # Create the demographic form
+    demographic_form = DemographicForm(post_data)
+    # Check if the form is valid
+    if demographic_form.is_valid():
+        # Save the post data in a session to access it later in survey_view
+        request.session['demographic_data'] = demographic_form.cleaned_data
+        # Print a message that the submission was saved
+        messages.add_message(request, messages.INFO, 'Submissions saved.')
+        # redirect to the research scenario page
+        return redirect('bookrec_app:research_scenario')
+    # return render
+    return render(request, 'bookrec/index.html', context={'demographic_form': demographic_form})
+
+
+def research_scenario_view(request):
+    """View for the description of the research scenario"""
+    return render(request, 'bookrec/research_scenario.html', context={})
 
 
 def survey_view(request):
-    """Handles the program and render logic for the index page (main part of website)"""
+    """Handles the program and render logic for the survey page (main part of website)"""
     # Initial context_dict (resolves recommendation lists and rotation)
     context_dict = create_context_dict()
-    # Code for handling the survey
     # Get the current rotation state with function
     current_rotation_state = get_current_rotation_state('rotator_pickle.pk')
     # access survey through the rotation_state
     current_survey = get_object_or_404(Survey, rotation_state=current_rotation_state)
     # get the form data
     post_data = request.POST if request.method == 'POST' else None
-    # create the survey form with current survey (accessed with rotation state) and form data
-    survey_form = SurveyForm(current_survey, post_data)
-    # check if form is correct
-    if survey_form.is_bound and survey_form.is_valid():
-        # save form with overridden save method
-        survey_form.save()
+    # retrieve the demographic data from the session
+    demographic_data = request.session.get('demographic_data', {})
+    # retrieve the sessionId created by html field and set by javascript in logging.js
+    sessionId = request.POST.get('sessionId') if request.method == 'POST' else None
+    # create initial data dictionary containing the sessionId and the DemographicData from index view
+    initial_data = {
+        'sessionId': sessionId,
+        **demographic_data
+    }
+    # create a combinedForm with both initial_data and survey data
+    combined_form = CombinedForm(current_survey, post_data, initial=initial_data)
+    if combined_form.is_valid():
+        # save submission
+        combined_form.save()
         # display message that the submission was saved
         messages.add_message(request, messages.INFO, 'Submissions saved.')
         # redirect to thank you page !important!
@@ -45,15 +70,15 @@ def survey_view(request):
 
     # add form and survey to the context_dict
     context_dict['survey'] = current_survey
-    context_dict['survey_form'] = survey_form
+    context_dict['survey_form'] = combined_form
 
     # return render
     return render(request, 'bookrec/survey_page.html', context_dict)
 
 
 def thank_you_view(request):
-    """Handles program and render logic for the thank you page - accessed when filling out the survey and
-    successfully saving the data"""
+    """Handles program and render logic for the thank-you page - accessed when filling out the survey and
+    successfully saving the data entered by the participant"""
 
     # IMPORTANT! Rotate the rotation_list; how? look at the docstring inside the function
     rotate_rotation_list('rotator_pickle.pk')
@@ -62,7 +87,7 @@ def thank_you_view(request):
 
 
 def logging_view(request):
-    logger = logging.getLogger('BookRec')
+    """Handles the logger messages received by the json logger"""
     if request.method == "POST":
         message = request.POST.get("message")
         logger.info(f"User Interaction: {message}")
@@ -72,9 +97,7 @@ def logging_view(request):
 
 
 def create_context_dict() -> dict:
-    """
-    Creates part of the context_dict for the render statement of index.
-    """
+    """Creates part of the context_dict for the render statement of index."""
     # Create entries for the book list using our helper function
     books_ii = read_csv_recs(os.path.join(BASE_DIR, 'data/recs_ii.csv'))
     books_uu = read_csv_recs(os.path.join(BASE_DIR, 'data/recs_uu.csv'))

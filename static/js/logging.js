@@ -12,6 +12,11 @@ $(document).ready(function () {
         sessionId = generateSessionId();
         localStorage.setItem('sessionId', sessionId);
     }
+    // Attach an event handler to the form's submit event
+    $('form').on('submit', function () {
+        // Set the sessionId in the hidden input field just before submission
+        $('#sessionIdField').val(sessionId);
+    });
 
     // Function to generate a random session ID
     function generateSessionId() {
@@ -34,7 +39,7 @@ $(document).ready(function () {
         // Send an AJAX request to log the event on the server
         $.ajax({
             type: "POST",
-            url: url,  // Replace with your Django URL
+            url: url,
             data: { message: logMessage },
             beforeSend: function(xhr, settings) {
                 xhr.setRequestHeader("X-CSRFToken", csrftoken);

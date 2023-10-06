@@ -47,12 +47,12 @@ def add_choice(question, text):
 
 
 def populate_survey():
-    add_survey("Survey IIUU (24 Questions)", "IIUU")
-    add_survey("Survey IIALS (24 Questions)", "IIALS")
-    add_survey("Survey UUALS (24 Questions)", "UUALS")
-    add_survey("Survey UUII (24 Questions)", "UUII")
-    add_survey("Survey ALSII (24 Questions)", "ALSII")
-    add_survey("Survey ALSUU (24 Questions)", "ALSUU")
+    add_survey("Survey (24 Questions)", "IIUU")
+    add_survey("Survey (24 Questions)", "IIALS")
+    add_survey("Survey (24 Questions)", "UUALS")
+    add_survey("Survey (24 Questions)", "UUII")
+    add_survey("Survey (24 Questions)", "ALSII")
+    add_survey("Survey (24 Questions)", "ALSUU")
 
 
 def populate_choices():
@@ -90,7 +90,7 @@ def populate_questions():
                      # line for separation
                      '14. Choose the third option',
                      # line for separation
-                     '15. Which recommender would better help you find books to watch?',
+                     '15. Which recommender would better help you find books to read?',
                      '16. Which recommender would you be more likely to recommend to your friends',
                      '17. Which list of recommendations do you find more valuable?',
                      '18. Which recommender would you rather have as an app on your mobile phone?',

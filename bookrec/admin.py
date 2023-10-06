@@ -1,5 +1,5 @@
 from django.contrib import admin
-from bookrec.models import Book, Survey, Question, Choice, Submission
+from bookrec.models import Book, Survey, Question, Choice, SurveyResponse
 
 
 class BookAdmin(admin.ModelAdmin):
@@ -28,4 +28,4 @@ admin.site.register(Book, BookAdmin)
 admin.site.register(Survey, SurveyAdmin)
 admin.site.register(Question, QuestionAdmin)
 admin.site.register(Choice)
-admin.site.register(Submission)
+admin.site.register(SurveyResponse)

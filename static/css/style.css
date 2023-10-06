@@ -7,13 +7,14 @@ body {
   flex-direction: column;
   min-height: 100%;
   background-color: #ececec;
+  font-size: 16px;
 }
 
 .container-main {
-  margin-top: 5px;
+  margin-top: 10px;
   margin-bottom: 75px;
-  padding-left: 5px;
-  padding-right: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 .center-container {
@@ -137,6 +138,7 @@ footer {
   text-decoration: underline;
 }
 
-.survey-form input[type="radio"] {
-  display: inline;
+.custom-choice-field {
+  width: 200px;
 }
+
