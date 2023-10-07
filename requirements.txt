@@ -113,3 +113,4 @@ pip~=23.2.1
 wheel~=0.41.1
 setuptools~=65.5.0
 django-crispy-forms~=2.0
+crispy_bootstrap4
