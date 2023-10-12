@@ -110,3 +110,11 @@ class SurveyResponse(models.Model):
 
     def __str__(self):
         return f"{self.sessionId}:{self.rotation_state}"
+
+
+class RotationState(models.Model):
+    rotation_order = models.JSONField(default=list)
+    current_index = models.IntegerField(default=0)
+
+    def get_current_state(self):
+        return self.rotation_order[self.current_index]

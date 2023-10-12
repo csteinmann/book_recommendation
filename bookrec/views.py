@@ -2,17 +2,17 @@ import string
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
-from bookrec.models import Book, Survey
+from bookrec.models import Book, Survey, RotationState
 from bookrec.forms import CombinedForm, DemographicForm
 import csv
 import os
 from pathlib import Path
-import pickle
 import logging
 
 # Base directory - used for reading and saving data - avoiding hardcoding the paths
 BASE_DIR = Path(__file__).resolve().parent.parent
 logger = logging.getLogger('BookRec')
+
 
 # Create your views here.
 
@@ -44,7 +44,7 @@ def survey_view(request):
     # Initial context_dict (resolves recommendation lists and rotation)
     context_dict = create_context_dict()
     # Get the current rotation state with function
-    current_rotation_state = get_current_rotation_state('rotator_pickle.pk')
+    current_rotation_state = get_current_rotation_state()
     # access survey through the rotation_state
     current_survey = get_object_or_404(Survey, rotation_state=current_rotation_state)
     # get the form data
@@ -81,7 +81,7 @@ def thank_you_view(request):
     successfully saving the data entered by the participant"""
 
     # IMPORTANT! Rotate the rotation_list; how? look at the docstring inside the function
-    rotate_rotation_list('rotator_pickle.pk')
+    rotate_rotation_list()
     # Return render
     return render(request, 'bookrec/thank_you.html')
 
@@ -103,11 +103,8 @@ def create_context_dict() -> dict:
     books_uu = read_csv_recs(os.path.join(BASE_DIR, 'data/recs_uu.csv'))
     books_als = read_csv_recs(os.path.join(BASE_DIR, 'data/recs_als.csv'))
 
-    # Line below is only needed for the first run to create the pickled file!
-    # initiate_pickle('rotator_pickle-pk')
-
     # Open the pickled file to read the rotation list and save the rotation state
-    current_rotation_state = get_current_rotation_state('rotator_pickle.pk')
+    current_rotation_state = get_current_rotation_state()
 
     # Look for current rotation state and create content dictionary accordingly
     # Returns the created context_dict
@@ -131,35 +128,23 @@ def create_context_dict() -> dict:
         return context_dict
 
 
-def get_current_rotation_state(filename) -> string:
-    """Reads the pickled rotation string
-    and returns the current rotation state: first element of list
-    :param filename: filename of pickle"""
-    with open(filename, 'rb') as fi:
-        current_rotation_list = pickle.load(fi)
-        current_rotation_state = current_rotation_list[0]
-        return current_rotation_state
+def get_current_rotation_state() -> string:
+    """Retrieves the current rotation state form the database by using the function of the model"""
+    rotation_state = RotationState.objects.first()
+    return rotation_state.get_current_state()
 
 
-def initiate_pickle(filename):
-    """Needed for the initiation of the pickled file
-    Creates a pickle with the start rotation
-    :param filename: filename of pickle"""
-    rotation_list = ['IIUU', 'IIALS', 'UUALS', 'UUII', 'ALSII', 'ALSUU']
-    with open(filename, 'wb') as fi:
-        pickle.dump(rotation_list, fi)
-
-
-def rotate_rotation_list(filename):
-    """Rotates the State list: [a, b, c] -> [b, c, a]
-    :param filename: filename of pickle
-    """
-    with open(filename, 'rb') as fi:
-        current_rotation_list = pickle.load(fi)
-    current_rotation_list.append(current_rotation_list[0])
-    del current_rotation_list[0]
-    with open(filename, 'wb') as fi:
-        pickle.dump(current_rotation_list, fi)
+def rotate_rotation_list():
+    """Changes the index in the rotation state model which results in accessing the next rotation abbr.
+    in the next webpage call"""
+    rotation_state = RotationState.objects.first()
+    current_index = rotation_state.current_index
+    rotation_order = rotation_state.rotation_order
+    # set the new index
+    new_index = (current_index + 1) % len(rotation_order)
+    rotation_state.current_index = new_index
+    rotation_state.save()
+    return
 
 
 def read_csv_recs(path) -> list:
