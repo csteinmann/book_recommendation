@@ -1,0 +1,151 @@
+---
+title: "Confirmatory Factor Analysis and "
+output: html_notebook
+---
+
+```{r}
+install.packages(c("readr", "dplyr"))
+```
+```{r}
+library(dplyr)
+library(readr)
+```
+
+```{r}
+# Load data for Item-Item vs. ALS comparison
+df_item_als <- read_csv("../data/IIvALS.csv")
+
+# Load data for Item-Item vs. User-User comparison
+df_item_user <- read_csv("../data/IIvUU.csv")
+
+# Load data for ALS vs. User-User comparison
+df_als_user <- read_csv("../data/ALSvUU.csv")
+```
+```{r}
+combined_df <- rbind(df_item_als, df_item_user, df_als_user)
+```
+
+```{r}
+combined_df <- combined_df %>%
+  mutate(across(starts_with("answer"), ~case_when(
+    . == "Much more A than B" ~ -2,
+    . == "Bit more A than B" ~ -1,
+    . == "About the same" ~ 0,
+    . == "Bit more B than A" ~ 1,
+    . == "Much more B than A" ~ 2,
+    TRUE ~ NA_real_
+  )))
+
+# Check the recoded data
+head(combined_df)
+```
+```{r}
+columns_to_drop <- c("SurveyResponseID", "age_group", "gender", "reading_platform", "book_frequency", "genre", "sessionId", "answer_to_14")
+# Drop specified columns
+combined_df <- combined_df %>%
+  select(-one_of(columns_to_drop))
+```
+```{r}
+head(combined_df)
+```
+```{r}
+rename_columns <- c("FirstImpression" = "answer_to_1", "AccAppealing" = "answer_to_2", "AccBest" = "answer_to_3", "AccBad" = "answer_to_4", "AccAtTop" = "answer_to_5", "DivSimilar" = "answer_to_6", "DivVaried" = "answer_to_7", "DivMoods" = "answer_to_8", "DivTastes" = "answer_to_9", "UndTaste" = "answer_to_10", "UndTrust" = "answer_to_11", "UndPersonalized" = "answer_to_12", "UndMainstream" = "answer_to_13", "SatFind" = "answer_to_15", "SatRecommend" = "answer_to_16", "SatValuable" = "answer_to_17", "SatMobile" = "answer_to_18", "SatSat" = "answer_to_19", "NovUnexpected" = "answer_to_20", "NovFamiliar" = "answer_to_21", "NovSurprising" = "answer_to_22", "NovUnthought" = "answer_to_23", "NovFewerNew" = "answer_to_24")
+
+# Rename specified columns
+combined_df <- combined_df %>%
+  rename(!!!rename_columns)
+```
+```{r}
+combined_df <- combined_df %>%
+  mutate(CondALSUU = ifelse(rotation_state %in% c("ALSUU", "UUALS"), 1, 0),
+         CondIIUU = ifelse(rotation_state %in% c("IIUU", "UUII"), 1, 0))
+```
+```{r}
+combined_df <- combined_df %>%
+  mutate(
+    PredAccRatio = case_when(
+      rotation_state %in% c("IIALS", "ALSII") ~ (1.045178 - 1.140777),
+      rotation_state %in% c("IIUU", "UUII") ~ (1.045178 - 1.196681),
+      rotation_state %in% c("ALSUU", "UUALS") ~ (1.140777 - 1.196681),
+      TRUE ~ NA_real_
+    ),
+    PopRatio = case_when(
+      rotation_state %in% c("IIALS", "ALSII") ~ log(85344.10 / 43426.00),
+      rotation_state %in% c("IIUU", "UUII") ~ log(85344.10 / 134765.25),
+      rotation_state %in% c("ALSUU", "UUALS") ~ log(43426.00 / 134765.25),
+      TRUE ~ NA_real_
+    ),
+    SimRatio = case_when(
+      rotation_state %in% c("IIALS", "ALSII") ~ (0.082708 - 0.137050),
+      rotation_state %in% c("IIUU", "UUII") ~ (0.082708 - 0.139958),
+      rotation_state %in% c("ALSUU", "UUALS") ~ (0.137050 - 0.139958),
+      TRUE ~ NA_real_
+    )
+  )
+```
+
+```{r}
+vars_to_standardize <- c("FirstImpression", "AccAppealing", "AccBest", "AccBad", "AccAtTop", "DivSimilar", "DivVaried", "DivMoods", "DivTastes", "UndTaste", "UndTrust", "UndPersonalized", "UndMainstream", "SatFind", "SatRecommend", "SatValuable", "SatMobile",  "SatSat", "NovUnexpected", "NovFamiliar", "NovSurprising", "NovUnthought", "NovFewerNew", "CondALSUU", "CondIIUU")
+
+# Standardize selected variables
+combined_df[vars_to_standardize] <- scale(combined_df[vars_to_standardize])
+```
+
+```{r}
+combined_df
+```
+```{r}
+# Install and load required packages
+install.packages(c("lavaan", "semTools", "semPlot"))
+```
+```{r}
+# Load the packages
+library(lavaan)
+library(semTools)
+library(semPlot)
+```
+```{r}
+model <- '
+  Acc =~ NA * AccAppealing + AccBest + AccBad + AccAtTop
+  Div =~ NA * DivSimilar + DivVaried + DivMoods + DivTastes 
+  Und =~ NA * UndTaste + UndTrust + UndPersonalized + UndMainstream
+  Sat =~ NA * SatFind + SatRecommend + SatValuable + SatMobile + SatSat
+  Nov =~ NA * NovUnexpected + NovFamiliar + NovSurprising + NovUnthought + NovFewerNew
+  Acc ~~ 1*Acc
+  Div ~~ 1*Div
+  Nov ~~ 1*Nov
+  Sat ~~ 1*Sat
+  Und ~~ 1*Und
+'
+
+# Fit the model
+fit <- sem(model, data = combined_df)
+
+# Summarize the results
+summary(fit, fit.measures = TRUE)
+save(fit, file = "../data/CFA.rda")
+```
+```{r}
+model2 <- '
+  Div =~ NA * DivVaried + DivMoods + DivTastes 
+  Sat =~ NA * SatFind + SatRecommend + SatValuable + SatMobile + SatSat
+  Nov =~ NA * NovFamiliar + NovSurprising + NovUnthought
+  Div ~~ 1*Div
+  Nov ~~ 1*Nov
+  Sat ~~ 1*Sat
+  
+  # Regressions
+  FirstImpression ~ Nov + Sat
+  Sat ~ Nov + PredAccRatio
+  Nov ~ PopRatio + CondIIUU
+  Div ~ SimRatio + Nov
+'
+
+# Fit the model
+fit2 <- sem(model2, data = combined_df)
+
+# Summarize the results
+summary(fit2, standardize = TRUE, fit.measures = TRUE)
+#save(fit, file = "../data/SEM.rda")
+```
+
