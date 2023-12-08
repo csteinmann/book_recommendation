@@ -62,7 +62,7 @@ for col in dfs_by_rotation_state['ALSII'].columns:
 df_IIvALS = pd.concat([dfs_by_rotation_state['IIALS'], dfs_by_rotation_state['ALSII']], ignore_index=True)
 df_IIvALS.to_csv('../data/IIvALS.csv', index=False)
 
-# for ALS v. UU UUALS is changed to match the sequence of UUALS
+# for ALS v. UU UUALS is changed to match the sequence of ALSUU
 for col in dfs_by_rotation_state['UUALS'].columns:
     if col.startswith('answer_to_'):
         dfs_by_rotation_state['UUALS'][col] = dfs_by_rotation_state['UUALS'][col].replace(replace_mapping)

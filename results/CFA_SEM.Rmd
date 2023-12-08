@@ -4,27 +4,94 @@ output: html_notebook
 ---
 
 ```{r}
-install.packages(c("readr", "dplyr"))
+install.packages(c("readr", "dplyr", "purrr", "stringr", "tidyr"))
 ```
 ```{r}
 library(dplyr)
 library(readr)
+library(purrr)
+library(stringr)
+library(tidyr)
 ```
 
 ```{r}
 # Load data for Item-Item vs. ALS comparison
-df_item_als <- read_csv("../data/IIvALS.csv")
+iials_df <- read_csv("../data/IIvALS.csv")
+iiuu_df <- read_csv("../data/IIvUU.csv")
+alsuu_df <- read_csv("../data/ALSvUU.csv")
+genre_similarity_df <- read_csv("../data/genre_similarities.csv")
+```
 
-# Load data for Item-Item vs. User-User comparison
-df_item_user <- read_csv("../data/IIvUU.csv")
+```{r}
+combined_df <- rbind(iials_df, iiuu_df, alsuu_df)
+alsvuu_df <- rbind(iials_df, iiuu_df)
+iivuu_df <- rbind(iials_df, alsuu_df)
+iivals_df <- rbind(iiuu_df, alsuu_df)
+```
 
-# Load data for ALS vs. User-User comparison
-df_als_user <- read_csv("../data/ALSvUU.csv")
+```{r}
+genre_mapping <- list(
+  "Mystery, thriller and crime" = "mystery",
+  "History" = "history",
+  "Biographies" = "biography",
+  "Romance" = "romance",
+  "Cookbooks" = "cookbooks",
+  "Science fiction" = "science fiction",
+  "Fantasy" = "fantasy",
+  "Classics/literature" = "classics",
+  "Health" = "health",
+  "Religion/spirituality" = "religion",
+  "Self-help" = "self help",
+  "True crime" = "true crime",
+  "Political" = "politics",
+  "Business" = "business",
+  "Poetry" = "poetry",
+  "Westerns" = "westerns",
+  "Other fiction" = "fiction",
+  "Other non-fiction" = "nonfiction"
+)
 ```
 ```{r}
-combined_df <- rbind(df_item_als, df_item_user, df_als_user)
+combined_df <- combined_df %>%
+  mutate(genre = sapply(genre, function(genre_str) {
+    for (old_genre in names(genre_mapping)) {
+      genre_str <- gsub(old_genre, genre_mapping[old_genre], genre_str)
+    }
+    return(genre_str)
+  }))
 ```
-
+```{r}
+long_combined_df <- combined_df %>%
+  mutate(genre = str_replace_all(genre, "[\\[\\]']", "")) %>%  # Remove square brackets and single quotes
+  tidyr::separate_rows(genre, sep = ", ") %>%
+  mutate(genre_mapped = recode(genre, !!!genre_mapping, .default = genre))
+```
+```{r}
+# Merge the long_combined_df with genre_similarities_df based on the 'genre_mapped' column
+merged_df <- left_join(long_combined_df, genre_similarity_df, by = c("genre_mapped" = "Genre"))
+```
+```{r}
+# Summarize by SurveyResponseID
+summary_df <- merged_df %>%
+  group_by(SurveyResponseID) %>%
+  summarize(expert_score = sum(`Similarity to Sci-Fi`, na.rm = TRUE) / n())
+```
+```{r}
+# Merge the summarized expert scores back to the original combined_df
+combined_df <- left_join(combined_df, summary_df, by = c("SurveyResponseID" = "SurveyResponseID"))
+```
+```{r}
+# Multiply expert_score based on book_frequency
+combined_df <- combined_df %>%
+  mutate(expert_score = case_when(
+    book_frequency == '0-4' ~ expert_score * 1,
+    book_frequency == '5-9' ~ expert_score * 2,
+    book_frequency == '10-14' ~ expert_score * 3,
+    book_frequency == '15-20' ~ expert_score * 4,
+    book_frequency == 'More than 20' ~ expert_score * 5,
+    TRUE ~ NA_real_ 
+  ))
+```
 ```{r}
 combined_df <- combined_df %>%
   mutate(across(starts_with("answer"), ~case_when(
@@ -35,18 +102,39 @@ combined_df <- combined_df %>%
     . == "Much more B than A" ~ 2,
     TRUE ~ NA_real_
   )))
-
-# Check the recoded data
-head(combined_df)
+alsvuu_df <- alsvuu_df %>%
+  mutate(across(starts_with("answer"), ~case_when(
+    . == "Much more A than B" ~ -2,
+    . == "Bit more A than B" ~ -1,
+    . == "About the same" ~ 0,
+    . == "Bit more B than A" ~ 1,
+    . == "Much more B than A" ~ 2,
+    TRUE ~ NA_real_
+  )))
+iivuu_df <- iivuu_df %>%
+  mutate(across(starts_with("answer"), ~case_when(
+    . == "Much more A than B" ~ -2,
+    . == "Bit more A than B" ~ -1,
+    . == "About the same" ~ 0,
+    . == "Bit more B than A" ~ 1,
+    . == "Much more B than A" ~ 2,
+    TRUE ~ NA_real_
+  )))
+iivals_df <- iivals_df %>%
+  mutate(across(starts_with("answer"), ~case_when(
+    . == "Much more A than B" ~ -2,
+    . == "Bit more A than B" ~ -1,
+    . == "About the same" ~ 0,
+    . == "Bit more B than A" ~ 1,
+    . == "Much more B than A" ~ 2,
+    TRUE ~ NA_real_
+  )))
 ```
 ```{r}
-columns_to_drop <- c("SurveyResponseID", "age_group", "gender", "reading_platform", "book_frequency", "genre", "sessionId", "answer_to_14")
+columns_to_drop <- c("SurveyResponseID", "sessionId", "answer_to_14")
 # Drop specified columns
 combined_df <- combined_df %>%
   select(-one_of(columns_to_drop))
-```
-```{r}
-head(combined_df)
 ```
 ```{r}
 rename_columns <- c("FirstImpression" = "answer_to_1", "AccAppealing" = "answer_to_2", "AccBest" = "answer_to_3", "AccBad" = "answer_to_4", "AccAtTop" = "answer_to_5", "DivSimilar" = "answer_to_6", "DivVaried" = "answer_to_7", "DivMoods" = "answer_to_8", "DivTastes" = "answer_to_9", "UndTaste" = "answer_to_10", "UndTrust" = "answer_to_11", "UndPersonalized" = "answer_to_12", "UndMainstream" = "answer_to_13", "SatFind" = "answer_to_15", "SatRecommend" = "answer_to_16", "SatValuable" = "answer_to_17", "SatMobile" = "answer_to_18", "SatSat" = "answer_to_19", "NovUnexpected" = "answer_to_20", "NovFamiliar" = "answer_to_21", "NovSurprising" = "answer_to_22", "NovUnthought" = "answer_to_23", "NovFewerNew" = "answer_to_24")
@@ -54,46 +142,60 @@ rename_columns <- c("FirstImpression" = "answer_to_1", "AccAppealing" = "answer_
 # Rename specified columns
 combined_df <- combined_df %>%
   rename(!!!rename_columns)
+alsvuu_df <- alsvuu_df %>%
+  rename(!!!rename_columns)
+iivuu_df <- iivuu_df %>%
+  rename(!!!rename_columns)
+iivals_df <- iivals_df %>%
+  rename(!!!rename_columns)
 ```
 ```{r}
 combined_df <- combined_df %>%
   mutate(CondALSUU = ifelse(rotation_state %in% c("ALSUU", "UUALS"), 1, 0),
-         CondIIUU = ifelse(rotation_state %in% c("IIUU", "UUII"), 1, 0))
+         CondIIUU = ifelse(rotation_state %in% c("IIUU", "UUII"), 1, 0),
+         CondIIALS = ifelse(rotation_state %in% c("IIALS", "ALSII"), 1, 0))
+alsvuu_df <- alsvuu_df %>%
+  mutate(CondIIUU = ifelse(rotation_state %in% c("IIUU", "UUII"), 1, 0))
+iivuu_df <- iivuu_df %>%
+  mutate(CondIIALS = ifelse(rotation_state %in% c("IIALS", "ALSII"), 1, 0))
+iivals_df <- iivals_df %>%
+  mutate(CondALSUU = ifelse(rotation_state %in% c("ALSUU", "UUALS"), 1, 0))
 ```
 ```{r}
 combined_df <- combined_df %>%
-  mutate(
-    PredAccRatio = case_when(
-      rotation_state %in% c("IIALS", "ALSII") ~ (1.045178 - 1.140777),
-      rotation_state %in% c("IIUU", "UUII") ~ (1.045178 - 1.196681),
-      rotation_state %in% c("ALSUU", "UUALS") ~ (1.140777 - 1.196681),
-      TRUE ~ NA_real_
-    ),
-    PopRatio = case_when(
-      rotation_state %in% c("IIALS", "ALSII") ~ log(85344.10 / 43426.00),
-      rotation_state %in% c("IIUU", "UUII") ~ log(85344.10 / 134765.25),
-      rotation_state %in% c("ALSUU", "UUALS") ~ log(43426.00 / 134765.25),
-      TRUE ~ NA_real_
-    ),
-    SimRatio = case_when(
-      rotation_state %in% c("IIALS", "ALSII") ~ (0.082708 - 0.137050),
-      rotation_state %in% c("IIUU", "UUII") ~ (0.082708 - 0.139958),
-      rotation_state %in% c("ALSUU", "UUALS") ~ (0.137050 - 0.139958),
-      TRUE ~ NA_real_
-    )
-  )
+  mutate(gender_man = ifelse(gender %in% "['Man']", 1, 0),
+         gender_woman = ifelse(gender %in% "['Woman']", 1, 0))
 ```
-
 ```{r}
-vars_to_standardize <- c("FirstImpression", "AccAppealing", "AccBest", "AccBad", "AccAtTop", "DivSimilar", "DivVaried", "DivMoods", "DivTastes", "UndTaste", "UndTrust", "UndPersonalized", "UndMainstream", "SatFind", "SatRecommend", "SatValuable", "SatMobile",  "SatSat", "NovUnexpected", "NovFamiliar", "NovSurprising", "NovUnthought", "NovFewerNew", "CondALSUU", "CondIIUU")
+combined_df <- combined_df %>%
+  mutate(age_numeric = case_when(
+    age_group == '18-24' ~ 21,
+    age_group == '25-34' ~ 29.5,
+    age_group == '35-44' ~ 39.5,
+    age_group == '45-54' ~ 49.5,
+    age_group == 'Above 64' ~ 65,
+    TRUE ~ NA_real_
+  ))
+```
+```{r}
+vars_to_standardize <- c("FirstImpression", "AccAppealing", "AccBest", "AccBad", "AccAtTop", "DivSimilar", "DivVaried", "DivMoods", "DivTastes", "UndTaste", "UndTrust", "UndPersonalized", "UndMainstream", "SatFind", "SatRecommend", "SatValuable", "SatMobile",  "SatSat", "NovUnexpected", "NovFamiliar", "NovSurprising", "NovUnthought", "NovFewerNew")
 
 # Standardize selected variables
 combined_df[vars_to_standardize] <- scale(combined_df[vars_to_standardize])
+alsvuu_df[vars_to_standardize] <- scale(alsvuu_df[vars_to_standardize])
+iivuu_df[vars_to_standardize] <- scale(iivuu_df[vars_to_standardize])
+iivals_df[vars_to_standardize] <- scale(iivals_df[vars_to_standardize])
+```
+```{r}
+set.seed(123)
+random_indices <- sample(nrow(alsvuu_df))
+alsvuu_df <- alsvuu_df[random_indices, ]
+```
+```{r}
+alsvuu_df
 ```
 
-```{r}
-combined_df
-```
+
 ```{r}
 # Install and load required packages
 install.packages(c("lavaan", "semTools", "semPlot"))
@@ -122,30 +224,73 @@ model <- '
 fit <- sem(model, data = combined_df)
 
 # Summarize the results
-summary(fit, fit.measures = TRUE)
+summary(fit, fit.measures = FALSE)
 save(fit, file = "../data/CFA.rda")
 ```
 ```{r}
-model2 <- '
+model <- '
   Div =~ NA * DivVaried + DivMoods + DivTastes 
-  Sat =~ NA * SatFind + SatRecommend + SatValuable + SatMobile + SatSat
-  Nov =~ NA * NovFamiliar + NovSurprising + NovUnthought
+  Acc =~ NA * AccAppealing + AccBest + AccBad + AccAtTop
+  Nov =~ NA * NovUnexpected + NovFamiliar + NovSurprising + NovUnthought
   Div ~~ 1*Div
+  Acc ~~ 1*Acc
   Nov ~~ 1*Nov
-  Sat ~~ 1*Sat
   
   # Regressions
-  FirstImpression ~ Nov + Sat
-  Sat ~ Nov + PredAccRatio
-  Nov ~ PopRatio + CondIIUU
-  Div ~ SimRatio + Nov
+  CondALSUU ~ CondIIUU
+  Acc ~ Div + CondALSUU
+  Nov ~ CondIIUU
+  FirstImpression ~ Acc + Nov
 '
 
 # Fit the model
-fit2 <- sem(model2, data = combined_df)
+fit <- sem(model, data = combined_df)
 
 # Summarize the results
-summary(fit2, standardize = TRUE, fit.measures = TRUE)
-#save(fit, file = "../data/SEM.rda")
+summary(fit, fit.measures = FALSE)
+#semPaths(fit2, "est", whatLabels = "std")
+save(fit, file = "../data/SEM.rda")
 ```
+```{r}
+model_demo <- '
+  Div =~ NA * DivVaried + DivMoods + DivTastes 
+  Acc =~ NA * AccAppealing + AccBest + AccBad + AccAtTop
+  Nov =~ NA * NovUnexpected + NovFamiliar + NovSurprising + NovUnthought
+  Div ~~ 1*Div
+  Acc ~~ 1*Acc
+  Nov ~~ 1*Nov
+  
+  # Regressions
+  CondALSUU ~ CondIIUU
+  Acc ~ Div + CondALSUU + expert_score
+  Nov ~ CondIIUU
+  FirstImpression ~ Acc +  Nov
+'
+
+# Fit the model
+fit3 <- sem(model_demo, data = combined_df)
+
+# Summarize the results
+summary(fit3, fit.measures = FALSE)
+semPaths(fit3, whatLabels = "std")
+save(fit3, file = "../data/SEM_Demographic.rda")
+```
+```{r}
+load("../data/CFA.rda")
+
+summary(fit, fit.measures = FALSE)
+semPaths(fit, whatLabels = "std")
+```
+load("../data/SEM.rda")
+
+summary(fit, fit.measures = FALSE)
+semPaths(fit, whatLabels = "std")
+
+```{r}
+load("../data/SEM_Demographic.rda")
+
+summary(fit, fit.measures = FALSE)
+semPaths(fit, whatLabels = "std")
+```
+
 
